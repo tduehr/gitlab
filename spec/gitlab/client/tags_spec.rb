@@ -2,7 +2,7 @@
 
 require 'spec_helper'
 
-describe Gitlab::Client do
+describe Gitlab::Gem::Client do
   it { is_expected.to respond_to :repo_tags }
   it { is_expected.to respond_to :repo_tag }
   it { is_expected.to respond_to :repo_create_tag }
@@ -13,7 +13,7 @@ describe Gitlab::Client do
   describe '.tags' do
     before do
       stub_get('/projects/3/repository/tags', 'tags')
-      @tags = Gitlab.tags(3)
+      @tags = Gitlab::Gem.tags(3)
     end
 
     it 'gets the correct resource' do
@@ -21,7 +21,7 @@ describe Gitlab::Client do
     end
 
     it 'returns a paginated response of repository tags' do
-      expect(@tags).to be_a Gitlab::PaginatedResponse
+      expect(@tags).to be_a Gitlab::Gem::PaginatedResponse
       expect(@tags.map(&:name)).to eq(%w[0.0.2 0.0.1])
     end
   end
@@ -29,7 +29,7 @@ describe Gitlab::Client do
   describe '.tag' do
     before do
       stub_get('/projects/3/repository/tags/0.0.1', 'tag')
-      @tag = Gitlab.tag(3, '0.0.1')
+      @tag = Gitlab::Gem.tag(3, '0.0.1')
     end
 
     it 'gets the correct resource' do
@@ -43,7 +43,7 @@ describe Gitlab::Client do
     context 'tag with special character' do
       before do
         stub_get('/projects/3/repository/tags/test%2Fme', 'tag')
-        @tag = Gitlab.tag(3, 'test/me')
+        @tag = Gitlab::Gem.tag(3, 'test/me')
       end
 
       it 'gets the correct resource' do
@@ -55,7 +55,7 @@ describe Gitlab::Client do
   describe '.create_tag' do
     before do
       stub_post('/projects/3/repository/tags', 'tag_create')
-      @tag = Gitlab.create_tag(3, '0.0.1', 'master', 'this tag is annotated', 'and it has release notes')
+      @tag = Gitlab::Gem.create_tag(3, '0.0.1', 'master', 'this tag is annotated', 'and it has release notes')
     end
 
     it 'gets the correct resource' do
@@ -75,7 +75,7 @@ describe Gitlab::Client do
   describe '.delete_tag' do
     before do
       stub_delete('/projects/3/repository/tags/0.0.1', 'tag_delete')
-      @tag = Gitlab.delete_tag(3, '0.0.1')
+      @tag = Gitlab::Gem.delete_tag(3, '0.0.1')
     end
 
     it 'gets the correct resource' do
@@ -89,7 +89,7 @@ describe Gitlab::Client do
     context 'tag with special character' do
       before do
         stub_delete('/projects/3/repository/tags/test%2Fme', 'tag_delete')
-        @tag = Gitlab.delete_tag(3, 'test/me')
+        @tag = Gitlab::Gem.delete_tag(3, 'test/me')
       end
 
       it 'gets the correct resource' do
@@ -101,7 +101,7 @@ describe Gitlab::Client do
   describe '.create_release' do
     before do
       stub_post('/projects/3/repository/tags/0.0.1/release', 'release_create')
-      @tag = Gitlab.create_release(3, '0.0.1', 'Amazing release. Wow')
+      @tag = Gitlab::Gem.create_release(3, '0.0.1', 'Amazing release. Wow')
     end
 
     it 'gets the correct resource' do
@@ -116,7 +116,7 @@ describe Gitlab::Client do
     context 'tag with special character' do
       before do
         stub_post('/projects/3/repository/tags/test%2Fme/release', 'release_create')
-        @tag = Gitlab.create_release(3, 'test/me', 'Amazing release. Wow')
+        @tag = Gitlab::Gem.create_release(3, 'test/me', 'Amazing release. Wow')
       end
 
       it 'gets the correct resource' do
@@ -128,7 +128,7 @@ describe Gitlab::Client do
   describe '.update_release' do
     before do
       stub_put('/projects/3/repository/tags/0.0.1/release', 'release_update')
-      @tag = Gitlab.update_release(3, '0.0.1', 'Amazing release. Wow')
+      @tag = Gitlab::Gem.update_release(3, '0.0.1', 'Amazing release. Wow')
     end
 
     it 'updates the correct resource' do
@@ -143,7 +143,7 @@ describe Gitlab::Client do
     context 'tag with special character' do
       before do
         stub_put('/projects/3/repository/tags/test%2Fme/release', 'release_update')
-        @tag = Gitlab.update_release(3, 'test/me', 'Amazing release. Wow')
+        @tag = Gitlab::Gem.update_release(3, 'test/me', 'Amazing release. Wow')
       end
 
       it 'updates the correct resource' do

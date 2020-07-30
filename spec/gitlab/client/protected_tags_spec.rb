@@ -2,11 +2,11 @@
 
 require 'spec_helper'
 
-describe Gitlab::Client do
+describe Gitlab::Gem::Client do
   describe '.protected_tags' do
     before do
       stub_get('/projects/1/protected_tags', 'protected_tags')
-      @protected_tags = Gitlab.protected_tags(1)
+      @protected_tags = Gitlab::Gem.protected_tags(1)
     end
 
     it 'gets the correct resource' do
@@ -14,14 +14,14 @@ describe Gitlab::Client do
     end
 
     it "returns a response of a project's protected_tags" do
-      expect(@protected_tags).to be_a Gitlab::PaginatedResponse
+      expect(@protected_tags).to be_a Gitlab::Gem::PaginatedResponse
     end
   end
 
   describe '.protected_tag' do
     before do
       stub_get('/projects/1/protected_tags/release-1-0', 'protected_tag')
-      @protected_tag = Gitlab.protected_tag(1, 'release-1-0')
+      @protected_tag = Gitlab::Gem.protected_tag(1, 'release-1-0')
     end
 
     it 'gets the correct resource' do
@@ -36,7 +36,7 @@ describe Gitlab::Client do
   describe '.protect_repository_tag' do
     before do
       stub_post('/projects/1/protected_tags', 'protected_tag')
-      @protected_tag = Gitlab.protect_repository_tag(1, 'release-1-0')
+      @protected_tag = Gitlab::Gem.protect_repository_tag(1, 'release-1-0')
     end
 
     it 'gets the correct resource' do
@@ -52,7 +52,7 @@ describe Gitlab::Client do
   describe '.unprotect_repository_tag' do
     before do
       stub_delete('/projects/1/protected_tags/release-1-0', 'empty')
-      Gitlab.unprotect_repository_tag(1, 'release-1-0')
+      Gitlab::Gem.unprotect_repository_tag(1, 'release-1-0')
     end
 
     it 'gets the correct resource' do

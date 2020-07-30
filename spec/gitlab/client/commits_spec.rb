@@ -2,7 +2,7 @@
 
 require 'spec_helper'
 
-describe Gitlab::Client do
+describe Gitlab::Gem::Client do
   it { is_expected.to respond_to :repo_commits }
   it { is_expected.to respond_to :repo_commit }
   it { is_expected.to respond_to :repo_commit_diff }
@@ -16,7 +16,7 @@ describe Gitlab::Client do
     before do
       stub_get('/projects/3/repository/commits', 'project_commits')
         .with(query: { ref: 'api' })
-      @commits = Gitlab.commits(3, ref: 'api')
+      @commits = Gitlab::Gem.commits(3, ref: 'api')
     end
 
     it 'gets the correct resource' do
@@ -25,7 +25,7 @@ describe Gitlab::Client do
     end
 
     it 'returns a paginated response of repository commits' do
-      expect(@commits).to be_a Gitlab::PaginatedResponse
+      expect(@commits).to be_a Gitlab::Gem::PaginatedResponse
       expect(@commits.first.id).to eq('f7dd067490fe57505f7226c3b54d3127d2f7fd46')
     end
   end
@@ -33,7 +33,7 @@ describe Gitlab::Client do
   describe '.commit' do
     before do
       stub_get('/projects/3/repository/commits/6104942438c14ec7bd21c6cd5bd995272b3faff6', 'project_commit')
-      @commit = Gitlab.commit(3, '6104942438c14ec7bd21c6cd5bd995272b3faff6')
+      @commit = Gitlab::Gem.commit(3, '6104942438c14ec7bd21c6cd5bd995272b3faff6')
     end
 
     it 'gets the correct resource' do
@@ -49,7 +49,7 @@ describe Gitlab::Client do
   describe '.commit_refs' do
     before do
       stub_get('/projects/3/repository/commits/0b4cd14ccc6a5c392526df719d29baf4315a4bbb/refs', 'project_commit_refs')
-      @refs = Gitlab.commit_refs(3, '0b4cd14ccc6a5c392526df719d29baf4315a4bbb')
+      @refs = Gitlab::Gem.commit_refs(3, '0b4cd14ccc6a5c392526df719d29baf4315a4bbb')
     end
 
     it 'gets the correct resource' do
@@ -68,7 +68,7 @@ describe Gitlab::Client do
     context 'on success' do
       before do
         stub_post('/projects/3/repository/commits/6104942438c14ec7bd21c6cd5bd995272b3faff6/cherry_pick', 'project_commit').with(body: { branch: 'master' })
-        @cherry_pick_commit = Gitlab.cherry_pick_commit(3, '6104942438c14ec7bd21c6cd5bd995272b3faff6', 'master')
+        @cherry_pick_commit = Gitlab::Gem.cherry_pick_commit(3, '6104942438c14ec7bd21c6cd5bd995272b3faff6', 'master')
       end
 
       it 'gets the correct resource' do
@@ -78,7 +78,7 @@ describe Gitlab::Client do
       end
 
       it 'returns the correct response' do
-        expect(@cherry_pick_commit).to be_a Gitlab::ObjectifiedHash
+        expect(@cherry_pick_commit).to be_a Gitlab::Gem::ObjectifiedHash
         expect(@cherry_pick_commit.id).to eq('6104942438c14ec7bd21c6cd5bd995272b3faff6')
       end
     end
@@ -87,7 +87,7 @@ describe Gitlab::Client do
       it 'includes the error_code' do
         stub_post('/projects/3/repository/commits/6104942438c14ec7bd21c6cd5bd995272b3faff6/cherry_pick', 'cherry_pick_commit_failure', 400)
 
-        expect { Gitlab.cherry_pick_commit(3, '6104942438c14ec7bd21c6cd5bd995272b3faff6', 'master') }.to raise_error(Gitlab::Error::BadRequest) do |ex|
+        expect { Gitlab::Gem.cherry_pick_commit(3, '6104942438c14ec7bd21c6cd5bd995272b3faff6', 'master') }.to raise_error(Gitlab::Gem::Error::BadRequest) do |ex|
           expect(ex.error_code).to eq('conflict')
         end
       end
@@ -97,7 +97,7 @@ describe Gitlab::Client do
   describe '.commit_diff' do
     before do
       stub_get('/projects/3/repository/commits/6104942438c14ec7bd21c6cd5bd995272b3faff6/diff', 'project_commit_diff')
-      @diff = Gitlab.commit_diff(3, '6104942438c14ec7bd21c6cd5bd995272b3faff6')
+      @diff = Gitlab::Gem.commit_diff(3, '6104942438c14ec7bd21c6cd5bd995272b3faff6')
     end
 
     it 'gets the correct resource' do
@@ -113,7 +113,7 @@ describe Gitlab::Client do
   describe '.commit_comments' do
     before do
       stub_get('/projects/3/repository/commits/6104942438c14ec7bd21c6cd5bd995272b3faff6/comments', 'project_commit_comments')
-      @commit_comments = Gitlab.commit_comments(3, '6104942438c14ec7bd21c6cd5bd995272b3faff6')
+      @commit_comments = Gitlab::Gem.commit_comments(3, '6104942438c14ec7bd21c6cd5bd995272b3faff6')
     end
 
     it 'gets the correct resource' do
@@ -122,7 +122,7 @@ describe Gitlab::Client do
     end
 
     it "returns commit's comments" do
-      expect(@commit_comments).to be_a Gitlab::PaginatedResponse
+      expect(@commit_comments).to be_a Gitlab::Gem::PaginatedResponse
       expect(@commit_comments.length).to eq(2)
       expect(@commit_comments[0].note).to eq('this is the 1st comment on commit 6104942438c14ec7bd21c6cd5bd995272b3faff6')
       expect(@commit_comments[0].author.id).to eq(11)
@@ -134,7 +134,7 @@ describe Gitlab::Client do
   describe '.create_commit_comment' do
     before do
       stub_post('/projects/3/repository/commits/6104942438c14ec7bd21c6cd5bd995272b3faff6/comments', 'project_commit_comment')
-      @merge_request = Gitlab.create_commit_comment(3, '6104942438c14ec7bd21c6cd5bd995272b3faff6', 'Nice code!')
+      @merge_request = Gitlab::Gem.create_commit_comment(3, '6104942438c14ec7bd21c6cd5bd995272b3faff6', 'Nice code!')
     end
 
     it 'returns information about the newly created comment' do
@@ -147,7 +147,7 @@ describe Gitlab::Client do
     before do
       stub_get('/projects/6/repository/commits/7d938cb8ac15788d71f4b67c035515a160ea76d8/statuses', 'project_commit_status')
         .with(query: { all: 'true' })
-      @statuses = Gitlab.commit_status(6, '7d938cb8ac15788d71f4b67c035515a160ea76d8', all: true)
+      @statuses = Gitlab::Gem.commit_status(6, '7d938cb8ac15788d71f4b67c035515a160ea76d8', all: true)
     end
 
     it 'gets the correct resource' do
@@ -156,7 +156,7 @@ describe Gitlab::Client do
     end
 
     it 'gets statuses of a commit' do
-      expect(@statuses).to be_kind_of Gitlab::PaginatedResponse
+      expect(@statuses).to be_kind_of Gitlab::Gem::PaginatedResponse
       expect(@statuses.first.sha).to eq('7d938cb8ac15788d71f4b67c035515a160ea76d8')
       expect(@statuses.first.ref).to eq('decreased-spec')
       expect(@statuses.first.status).to eq('failed')
@@ -169,7 +169,7 @@ describe Gitlab::Client do
     before do
       stub_post('/projects/6/statuses/7d938cb8ac15788d71f4b67c035515a160ea76d8', 'project_update_commit_status')
         .with(query: { name: 'test', ref: 'decreased-spec', state: 'failed' })
-      @status = Gitlab.update_commit_status(6, '7d938cb8ac15788d71f4b67c035515a160ea76d8', 'failed', name: 'test', ref: 'decreased-spec')
+      @status = Gitlab::Gem.update_commit_status(6, '7d938cb8ac15788d71f4b67c035515a160ea76d8', 'failed', name: 'test', ref: 'decreased-spec')
     end
 
     it 'gets the correct resource' do
@@ -178,7 +178,7 @@ describe Gitlab::Client do
     end
 
     it 'returns information about the newly created status' do
-      expect(@status).to be_kind_of Gitlab::ObjectifiedHash
+      expect(@status).to be_kind_of Gitlab::Gem::ObjectifiedHash
       expect(@status.id).to eq(498)
       expect(@status.sha).to eq('7d938cb8ac15788d71f4b67c035515a160ea76d8')
       expect(@status.status).to eq('failed')
@@ -209,7 +209,7 @@ describe Gitlab::Client do
 
     before do
       stub_post('/projects/6/repository/commits', 'project_commit_create').with(body: query)
-      @commit = Gitlab.create_commit(6, 'dev', 'refactors everything', actions, author_email: 'joe@sample.org', author_name: 'Joe Sample')
+      @commit = Gitlab::Gem.create_commit(6, 'dev', 'refactors everything', actions, author_email: 'joe@sample.org', author_name: 'Joe Sample')
     end
 
     it 'returns id of a created commit' do
@@ -220,7 +220,7 @@ describe Gitlab::Client do
   describe '.repo_commit_merge_requests' do
     before do
       stub_get('/projects/3/repository/commits/6104942438c14ec7bd21c6cd5bd995272b3faff6/merge_requests', 'project_commit_merge_requests')
-      @commit_merge_requests = Gitlab.commit_merge_requests(3, '6104942438c14ec7bd21c6cd5bd995272b3faff6')
+      @commit_merge_requests = Gitlab::Gem.commit_merge_requests(3, '6104942438c14ec7bd21c6cd5bd995272b3faff6')
     end
 
     it 'gets the correct resource' do
@@ -229,7 +229,7 @@ describe Gitlab::Client do
     end
 
     it "returns commit's associated merge_requests" do
-      expect(@commit_merge_requests).to be_a Gitlab::PaginatedResponse
+      expect(@commit_merge_requests).to be_a Gitlab::Gem::PaginatedResponse
       expect(@commit_merge_requests.length).to eq(2)
       expect(@commit_merge_requests[0].iid).to eq(1)
       expect(@commit_merge_requests[0].author.id).to eq(1)

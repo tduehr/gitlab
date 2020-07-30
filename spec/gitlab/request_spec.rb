@@ -2,7 +2,7 @@
 
 require 'spec_helper'
 
-describe Gitlab::Request do
+describe Gitlab::Gem::Request do
   before do
     # Prevent tests modifying the `default_params` value from causing cross-test
     # pollution
@@ -30,11 +30,11 @@ describe Gitlab::Request do
   describe '.parse' do
     it 'returns ObjectifiedHash' do
       body = JSON.unparse(a: 1, b: 2)
-      expect(described_class.parse(body)).to be_an Gitlab::ObjectifiedHash
+      expect(described_class.parse(body)).to be_an Gitlab::Gem::ObjectifiedHash
       expect(described_class.parse('true')).to be true
       expect(described_class.parse('false')).to be false
 
-      expect { described_class.parse('string') }.to raise_error(Gitlab::Error::Parsing)
+      expect { described_class.parse('string') }.to raise_error(Gitlab::Gem::Error::Parsing)
     end
   end
 
@@ -44,7 +44,7 @@ describe Gitlab::Request do
         @request.endpoint = nil
         expect do
           @request.request_defaults
-        end.to raise_error(Gitlab::Error::MissingCredentials, 'Please set an endpoint to API')
+        end.to raise_error(Gitlab::Gem::Error::MissingCredentials, 'Please set an endpoint to API')
       end
     end
 
@@ -66,7 +66,7 @@ describe Gitlab::Request do
       @request.endpoint = 'https://example.com/api/v4'
       path = "#{@request.endpoint}/version"
 
-      # Stub Gitlab::Configuration
+      # Stub Gitlab::Gem::Configuration
       allow(@request).to receive(:httparty).and_return(
         headers: { 'Cookie' => 'gitlab_canary=true' }
       )
@@ -87,7 +87,7 @@ describe Gitlab::Request do
       @request.private_token = 'token'
       @request.endpoint = 'https://example.com/api/v4'
 
-      # Stub Gitlab::Configuration
+      # Stub Gitlab::Gem::Configuration
       allow(@request).to receive(:httparty).and_return(nil)
 
       stub_request(:get, "#{@request.endpoint}/projects")
@@ -101,7 +101,7 @@ describe Gitlab::Request do
     it 'raises MissingCredentials when auth_token and private_token are not set' do
       expect do
         @request.send(:authorization_header)
-      end.to raise_error(Gitlab::Error::MissingCredentials)
+      end.to raise_error(Gitlab::Gem::Error::MissingCredentials)
     end
 
     it 'sets the correct header when given a private_token' do

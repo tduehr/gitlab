@@ -2,10 +2,10 @@
 
 lib = File.expand_path('lib', __dir__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-require 'gitlab/version'
+require 'gitlab/gem/version'
 
 Gem::Specification.new do |gem|
-  gem.name          = 'gitlab'
+  gem.name          = 'gitlab-gem'
   gem.version       = Gitlab::VERSION
   gem.authors       = ['Nihad Abbasov', 'Sean Edge']
   gem.email         = ['nihad@42na.in', 'asedge@gmail.com']

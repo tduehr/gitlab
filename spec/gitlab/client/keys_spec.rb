@@ -2,11 +2,11 @@
 
 require 'spec_helper'
 
-describe Gitlab::Client do
+describe Gitlab::Gem::Client do
   describe '.key' do
     before do
       stub_get('/keys/1', 'key')
-      @key = Gitlab.key(1)
+      @key = Gitlab::Gem.key(1)
     end
 
     it 'gets the correct resource' do

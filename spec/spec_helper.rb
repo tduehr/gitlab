@@ -23,20 +23,20 @@ end
 
 RSpec.configure do |config|
   config.before(:all) do
-    Gitlab.endpoint = 'https://api.example.com'
-    Gitlab.private_token = 'secret'
+    Gitlab::Gem.endpoint = 'https://api.example.com'
+    Gitlab::Gem.private_token = 'secret'
   end
 end
 
 %i[get post put delete].each do |method|
   define_method "stub_#{method}" do |path, fixture, status_code = 200|
-    stub_request(method, "#{Gitlab.endpoint}#{path}")
-      .with(headers: { 'PRIVATE-TOKEN' => Gitlab.private_token })
+    stub_request(method, "#{Gitlab::Gem.endpoint}#{path}")
+      .with(headers: { 'PRIVATE-TOKEN' => Gitlab::Gem.private_token })
       .to_return(body: load_fixture(fixture), status: status_code)
   end
 
   define_method "a_#{method}" do |path|
-    a_request(method, "#{Gitlab.endpoint}#{path}")
-      .with(headers: { 'PRIVATE-TOKEN' => Gitlab.private_token })
+    a_request(method, "#{Gitlab::Gem.endpoint}#{path}")
+      .with(headers: { 'PRIVATE-TOKEN' => Gitlab::Gem.private_token })
   end
 end

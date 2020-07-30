@@ -2,7 +2,7 @@
 
 require 'spec_helper'
 
-describe Gitlab::PaginatedResponse do
+describe Gitlab::Gem::PaginatedResponse do
   before do
     array = [1, 2, 3, 4]
     @paginated_response = described_class.new array

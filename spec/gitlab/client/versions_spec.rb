@@ -2,13 +2,13 @@
 
 require 'spec_helper'
 
-describe Gitlab::Client do
+describe Gitlab::Gem::Client do
   describe '.version' do
     before do
       stub_get('/version', 'version')
     end
 
-    let!(:version) { Gitlab.version }
+    let!(:version) { Gitlab::Gem.version }
 
     it 'gets the correct resource' do
       expect(a_get('/version')).to have_been_made

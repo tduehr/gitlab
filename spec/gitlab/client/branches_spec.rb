@@ -2,7 +2,7 @@
 
 require 'spec_helper'
 
-describe Gitlab::Client do
+describe Gitlab::Gem::Client do
   it { is_expected.to respond_to :repo_branches }
   it { is_expected.to respond_to :repo_branch }
   it { is_expected.to respond_to :repo_protect_branch }
@@ -16,7 +16,7 @@ describe Gitlab::Client do
   describe '.branches' do
     before do
       stub_get('/projects/3/repository/branches', 'branches')
-      @branches = Gitlab.branches(3)
+      @branches = Gitlab::Gem.branches(3)
     end
 
     it 'gets the correct resource' do
@@ -24,7 +24,7 @@ describe Gitlab::Client do
     end
 
     it 'returns a paginated response of repository branches' do
-      expect(@branches).to be_a Gitlab::PaginatedResponse
+      expect(@branches).to be_a Gitlab::Gem::PaginatedResponse
       expect(@branches.first.name).to eq('api')
     end
   end
@@ -32,7 +32,7 @@ describe Gitlab::Client do
   describe '.branch' do
     before do
       stub_get('/projects/3/repository/branches/api', 'branch')
-      @branch = Gitlab.branch(3, 'api')
+      @branch = Gitlab::Gem.branch(3, 'api')
     end
 
     it 'gets the correct resource' do
@@ -51,7 +51,7 @@ describe Gitlab::Client do
 
     context 'without options' do
       before do
-        @branch = Gitlab.protect_branch(3, 'api')
+        @branch = Gitlab::Gem.protect_branch(3, 'api')
       end
 
       it 'updates the correct resource' do
@@ -65,7 +65,7 @@ describe Gitlab::Client do
 
     context 'with options' do
       before do
-        @branch = Gitlab.protect_branch(3, 'api', developers_can_push: true)
+        @branch = Gitlab::Gem.protect_branch(3, 'api', developers_can_push: true)
       end
 
       it 'updates the correct resource with the correct options' do
@@ -79,7 +79,7 @@ describe Gitlab::Client do
   describe '.unprotect_branch' do
     before do
       stub_delete('/projects/3/protected_branches/api', 'branch')
-      @branch = Gitlab.unprotect_branch(3, 'api')
+      @branch = Gitlab::Gem.unprotect_branch(3, 'api')
     end
 
     it 'gets the correct resource' do
@@ -94,7 +94,7 @@ describe Gitlab::Client do
   describe '.create_branch' do
     before do
       stub_post('/projects/3/repository/branches', 'branch').with(query: { branch: 'api', ref: 'master' })
-      @branch = Gitlab.create_branch(3, 'api', 'master')
+      @branch = Gitlab::Gem.create_branch(3, 'api', 'master')
     end
 
     it 'gets the correct resource' do
@@ -111,7 +111,7 @@ describe Gitlab::Client do
   describe '.delete_branch' do
     before do
       stub_delete('/projects/3/repository/branches/api', 'branch_delete')
-      @branch = Gitlab.delete_branch(3, 'api')
+      @branch = Gitlab::Gem.delete_branch(3, 'api')
     end
 
     it 'gets the correct resource' do
@@ -126,7 +126,7 @@ describe Gitlab::Client do
   describe '.delete_merged_branches' do
     before do
       stub_delete('/projects/3/repository/merged_branches', 'empty')
-      @branch = Gitlab.delete_merged_branches(3)
+      @branch = Gitlab::Gem.delete_merged_branches(3)
     end
 
     it 'gets the correct resource' do
@@ -137,7 +137,7 @@ describe Gitlab::Client do
   describe '.protected_branches' do
     before do
       stub_get('/projects/3/protected_branches', 'protected_branches')
-      @branches = Gitlab.protected_branches(3)
+      @branches = Gitlab::Gem.protected_branches(3)
     end
 
     it 'gets the correct resource' do
@@ -145,7 +145,7 @@ describe Gitlab::Client do
     end
 
     it 'returns information about the protected_branches' do
-      expect(@branches).to be_a Gitlab::PaginatedResponse
+      expect(@branches).to be_a Gitlab::Gem::PaginatedResponse
       expect(@branches.first.merge_access_levels).to be_a Array
       expect(@branches.first.push_access_levels).to be_a Array
     end
@@ -154,7 +154,7 @@ describe Gitlab::Client do
   describe '.protected_branch' do
     before do
       stub_get('/projects/3/protected_branches/master', 'protected_branch')
-      @branch = Gitlab.protected_branch(3, 'master')
+      @branch = Gitlab::Gem.protected_branch(3, 'master')
     end
 
     it 'gets the correct resource' do

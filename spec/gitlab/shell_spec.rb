@@ -2,7 +2,7 @@
 
 require 'spec_helper'
 
-describe Gitlab::Shell do
+describe Gitlab::Gem::Shell do
   before do
     described_class.setup
   end
@@ -20,8 +20,8 @@ describe Gitlab::Shell do
       @history = described_class.history
     end
 
-    it 'returns a Gitlab::Shell::History instance' do
-      expect(@history).to be_a Gitlab::Shell::History
+    it 'returns a Gitlab::Gem::Shell::History instance' do
+      expect(@history).to be_a Gitlab::Gem::Shell::History
     end
 
     it 'responds to :save' do

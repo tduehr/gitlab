@@ -2,11 +2,11 @@
 
 require 'spec_helper'
 
-describe Gitlab::Client do
+describe Gitlab::Gem::Client do
   describe '.todos' do
     before do
       stub_get('/todos', 'todos')
-      @todos = Gitlab.todos
+      @todos = Gitlab::Gem.todos
     end
 
     it 'gets the correct resources' do
@@ -14,14 +14,14 @@ describe Gitlab::Client do
     end
 
     it "returns a paginated response of user's todos" do
-      expect(@todos).to be_a Gitlab::PaginatedResponse
+      expect(@todos).to be_a Gitlab::Gem::PaginatedResponse
     end
   end
 
   describe '.mark_todo_as_done' do
     before do
       stub_post('/todos/102/mark_as_done', 'todo')
-      @todo = Gitlab.mark_todo_as_done(102)
+      @todo = Gitlab::Gem.mark_todo_as_done(102)
     end
 
     it 'gets the correct resource' do
@@ -37,7 +37,7 @@ describe Gitlab::Client do
   describe '.mark_all_todos_as_done' do
     before do
       stub_post('/todos/mark_as_done', 'todos')
-      @todos = Gitlab.mark_all_todos_as_done
+      @todos = Gitlab::Gem.mark_all_todos_as_done
     end
 
     it 'gets the correct resources' do

@@ -2,11 +2,11 @@
 
 require 'spec_helper'
 
-describe Gitlab::Client do
+describe Gitlab::Gem::Client do
   describe '.users' do
     before do
       stub_get('/users', 'users')
-      @users = Gitlab.users
+      @users = Gitlab::Gem.users
     end
 
     it 'gets the correct resource' do
@@ -14,7 +14,7 @@ describe Gitlab::Client do
     end
 
     it 'returns a paginated response of users' do
-      expect(@users).to be_a Gitlab::PaginatedResponse
+      expect(@users).to be_a Gitlab::Gem::PaginatedResponse
       expect(@users.first.email).to eq('john@example.com')
     end
   end
@@ -23,7 +23,7 @@ describe Gitlab::Client do
     context 'with user ID passed' do
       before do
         stub_get('/users/1', 'user')
-        @user = Gitlab.user(1)
+        @user = Gitlab::Gem.user(1)
       end
 
       it 'gets the correct resource' do
@@ -38,7 +38,7 @@ describe Gitlab::Client do
     context 'without user ID passed' do
       before do
         stub_get('/user', 'user')
-        @user = Gitlab.user
+        @user = Gitlab::Gem.user
       end
 
       it 'gets the correct resource' do
@@ -55,7 +55,7 @@ describe Gitlab::Client do
     context 'when successful request' do
       before do
         stub_post('/users', 'user')
-        @user = Gitlab.create_user('email', 'pass', 'john.smith')
+        @user = Gitlab::Gem.create_user('email', 'pass', 'john.smith')
       end
 
       it 'gets the correct resource' do
@@ -72,15 +72,15 @@ describe Gitlab::Client do
       it 'throws an exception' do
         stub_post('/users', 'error_already_exists', 409)
         expect do
-          Gitlab.create_user('email', 'pass', 'john.smith')
-        end.to raise_error(Gitlab::Error::Conflict, "Server responded with code 409, message: 409 Already exists. Request URI: #{Gitlab.endpoint}/users")
+          Gitlab::Gem.create_user('email', 'pass', 'john.smith')
+        end.to raise_error(Gitlab::Gem::Error::Conflict, "Server responded with code 409, message: 409 Already exists. Request URI: #{Gitlab::Gem.endpoint}/users")
       end
     end
 
     context 'when not enough arguments' do
       it 'throws an exception' do
         expect do
-          Gitlab.create_user('email', 'pass')
+          Gitlab::Gem.create_user('email', 'pass')
         end.to raise_error(ArgumentError, 'Missing required parameters')
       end
     end
@@ -90,7 +90,7 @@ describe Gitlab::Client do
     context 'when successful request' do
       before do
         stub_post('/users', 'user')
-        @user = Gitlab.create_user('email', 'pass', 'username')
+        @user = Gitlab::Gem.create_user('email', 'pass', 'username')
       end
 
       it 'gets the correct resource' do
@@ -107,8 +107,8 @@ describe Gitlab::Client do
       it 'throws an exception' do
         stub_post('/users', 'error_already_exists', 409)
         expect do
-          Gitlab.create_user('email', 'pass', 'username')
-        end.to raise_error(Gitlab::Error::Conflict, "Server responded with code 409, message: 409 Already exists. Request URI: #{Gitlab.endpoint}/users")
+          Gitlab::Gem.create_user('email', 'pass', 'username')
+        end.to raise_error(Gitlab::Gem::Error::Conflict, "Server responded with code 409, message: 409 Already exists. Request URI: #{Gitlab::Gem.endpoint}/users")
       end
     end
   end
@@ -117,7 +117,7 @@ describe Gitlab::Client do
     before do
       @options = { name: 'Roberto' }
       stub_put('/users/1', 'user').with(body: @options)
-      @user = Gitlab.edit_user(1, @options)
+      @user = Gitlab::Gem.edit_user(1, @options)
     end
 
     it 'gets the correct resource' do
@@ -128,7 +128,7 @@ describe Gitlab::Client do
   describe '.delete_user' do
     before do
       stub_delete('/users/1', 'user')
-      @user = Gitlab.delete_user(1)
+      @user = Gitlab::Gem.delete_user(1)
     end
 
     it 'gets the correct resource' do
@@ -143,7 +143,7 @@ describe Gitlab::Client do
   describe '.block_user' do
     before do
       stub_post('/users/1/block', 'user_block_unblock')
-      @result = Gitlab.block_user(1)
+      @result = Gitlab::Gem.block_user(1)
     end
 
     it 'gets the correct resource' do
@@ -158,7 +158,7 @@ describe Gitlab::Client do
   describe '.unblock_user' do
     before do
       stub_post('/users/1/unblock', 'user_block_unblock')
-      @result = Gitlab.unblock_user(1)
+      @result = Gitlab::Gem.unblock_user(1)
     end
 
     it 'gets the correct resource' do
@@ -172,35 +172,35 @@ describe Gitlab::Client do
 
   describe '.session' do
     after do
-      Gitlab.endpoint = 'https://api.example.com'
-      Gitlab.private_token = 'secret'
+      Gitlab::Gem.endpoint = 'https://api.example.com'
+      Gitlab::Gem.private_token = 'secret'
     end
 
     before do
-      stub_request(:post, "#{Gitlab.endpoint}/session")
+      stub_request(:post, "#{Gitlab::Gem.endpoint}/session")
         .to_return(body: load_fixture('session'), status: 200)
-      @session = Gitlab.session('email', 'pass')
+      @session = Gitlab::Gem.session('email', 'pass')
     end
 
     context 'when endpoint is not set' do
       it 'raises Error::MissingCredentials' do
-        Gitlab.endpoint = nil
+        Gitlab::Gem.endpoint = nil
         expect do
-          Gitlab.session('email', 'pass')
-        end.to raise_error(Gitlab::Error::MissingCredentials, 'Please set an endpoint to API')
+          Gitlab::Gem.session('email', 'pass')
+        end.to raise_error(Gitlab::Gem::Error::MissingCredentials, 'Please set an endpoint to API')
       end
     end
 
     context 'when private_token is not set' do
       it 'does not raise Error::MissingCredentials' do
-        Gitlab.private_token = nil
-        expect { Gitlab.session('email', 'pass') }.not_to raise_error
+        Gitlab::Gem.private_token = nil
+        expect { Gitlab::Gem.session('email', 'pass') }.not_to raise_error
       end
     end
 
     context 'when endpoint is set' do
       it 'gets the correct resource' do
-        expect(a_request(:post, "#{Gitlab.endpoint}/session")).to have_been_made
+        expect(a_request(:post, "#{Gitlab::Gem.endpoint}/session")).to have_been_made
       end
 
       it 'returns information about a created session' do
@@ -213,7 +213,7 @@ describe Gitlab::Client do
   describe '.activities' do
     before do
       stub_get('/user/activities', 'activities')
-      @activities = Gitlab.activities
+      @activities = Gitlab::Gem.activities
     end
 
     it 'gets the correct resource' do
@@ -221,7 +221,7 @@ describe Gitlab::Client do
     end
 
     it 'returns a paginated response of user activity' do
-      expect(@activities).to be_a Gitlab::PaginatedResponse
+      expect(@activities).to be_a Gitlab::Gem::PaginatedResponse
       expect(@activities.first.username).to eq('someuser')
     end
   end
@@ -230,7 +230,7 @@ describe Gitlab::Client do
     context 'with user ID passed' do
       before do
         stub_get('/users/1/keys', 'keys')
-        @keys = Gitlab.ssh_keys(user_id: 1)
+        @keys = Gitlab::Gem.ssh_keys(user_id: 1)
       end
 
       it 'gets the correct resource' do
@@ -238,7 +238,7 @@ describe Gitlab::Client do
       end
 
       it 'returns a paginated response of SSH keys' do
-        expect(@keys).to be_a Gitlab::PaginatedResponse
+        expect(@keys).to be_a Gitlab::Gem::PaginatedResponse
         expect(@keys.first.title).to eq('narkoz@helium')
       end
     end
@@ -246,7 +246,7 @@ describe Gitlab::Client do
     context 'without user ID passed' do
       before do
         stub_get('/user/keys', 'keys')
-        @keys = Gitlab.ssh_keys
+        @keys = Gitlab::Gem.ssh_keys
       end
 
       it 'gets the correct resource' do
@@ -254,7 +254,7 @@ describe Gitlab::Client do
       end
 
       it 'returns a paginated response of SSH keys' do
-        expect(@keys).to be_a Gitlab::PaginatedResponse
+        expect(@keys).to be_a Gitlab::Gem::PaginatedResponse
         expect(@keys.first.title).to eq('narkoz@helium')
       end
     end
@@ -263,7 +263,7 @@ describe Gitlab::Client do
   describe '.ssh_key' do
     before do
       stub_get('/user/keys/1', 'key')
-      @key = Gitlab.ssh_key(1)
+      @key = Gitlab::Gem.ssh_key(1)
     end
 
     it 'gets the correct resource' do
@@ -279,7 +279,7 @@ describe Gitlab::Client do
     describe 'without user ID' do
       before do
         stub_post('/user/keys', 'key')
-        @key = Gitlab.create_ssh_key('title', 'body')
+        @key = Gitlab::Gem.create_ssh_key('title', 'body')
       end
 
       it 'gets the correct resource' do
@@ -296,7 +296,7 @@ describe Gitlab::Client do
       before do
         stub_post('/users/1/keys', 'key')
         @options = { user_id: 1 }
-        @key = Gitlab.create_ssh_key('title', 'body', @options)
+        @key = Gitlab::Gem.create_ssh_key('title', 'body', @options)
       end
 
       it 'gets the correct resource' do
@@ -314,7 +314,7 @@ describe Gitlab::Client do
     describe 'without user ID' do
       before do
         stub_delete('/user/keys/1', 'key')
-        @key = Gitlab.delete_ssh_key(1)
+        @key = Gitlab::Gem.delete_ssh_key(1)
       end
 
       it 'gets the correct resource' do
@@ -330,7 +330,7 @@ describe Gitlab::Client do
       before do
         stub_delete('/users/1/keys/1', 'key')
         @options = { user_id: 1 }
-        @key = Gitlab.delete_ssh_key(1, @options)
+        @key = Gitlab::Gem.delete_ssh_key(1, @options)
       end
 
       it 'gets the correct resource' do
@@ -347,7 +347,7 @@ describe Gitlab::Client do
     describe 'without user ID' do
       before do
         stub_get('/user/emails', 'user_emails')
-        @emails = Gitlab.emails
+        @emails = Gitlab::Gem.emails
       end
 
       it 'gets the correct resource' do
@@ -364,7 +364,7 @@ describe Gitlab::Client do
     describe 'with user ID' do
       before do
         stub_get('/users/2/emails', 'user_emails')
-        @emails = Gitlab.emails(2)
+        @emails = Gitlab::Gem.emails(2)
       end
 
       it 'gets the correct resource' do
@@ -382,7 +382,7 @@ describe Gitlab::Client do
   describe '.email' do
     before do
       stub_get('/user/emails/2', 'user_email')
-      @email = Gitlab.email(2)
+      @email = Gitlab::Gem.email(2)
     end
 
     it 'gets the correct resource' do
@@ -399,7 +399,7 @@ describe Gitlab::Client do
     describe 'without user ID' do
       before do
         stub_post('/user/emails', 'user_email')
-        @email = Gitlab.add_email('email@example.com')
+        @email = Gitlab::Gem.add_email('email@example.com')
       end
 
       it 'gets the correct resource' do
@@ -416,7 +416,7 @@ describe Gitlab::Client do
     describe 'with user ID' do
       before do
         stub_post('/users/2/emails', 'user_email')
-        @email = Gitlab.add_email('email@example.com', 2)
+        @email = Gitlab::Gem.add_email('email@example.com', 2)
       end
 
       it 'gets the correct resource' do
@@ -435,7 +435,7 @@ describe Gitlab::Client do
     describe 'without user ID' do
       before do
         stub_delete('/user/emails/1', 'user_email')
-        @email = Gitlab.delete_email(1)
+        @email = Gitlab::Gem.delete_email(1)
       end
 
       it 'gets the correct resource' do
@@ -450,7 +450,7 @@ describe Gitlab::Client do
     describe 'with user ID' do
       before do
         stub_delete('/users/2/emails/1', 'user_email')
-        @email = Gitlab.delete_email(1, 2)
+        @email = Gitlab::Gem.delete_email(1, 2)
       end
 
       it 'gets the correct resource' do
@@ -466,7 +466,7 @@ describe Gitlab::Client do
   describe '.user_search' do
     before do
       stub_get('/users?search=User', 'user_search')
-      @users = Gitlab.user_search('User')
+      @users = Gitlab::Gem.user_search('User')
     end
 
     it 'gets the correct resource' do

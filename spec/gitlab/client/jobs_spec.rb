@@ -2,11 +2,11 @@
 
 require 'spec_helper'
 
-describe Gitlab::Client do
+describe Gitlab::Gem::Client do
   describe '.jobs' do
     before do
       stub_get('/projects/1/jobs', 'jobs')
-      @projects = Gitlab.jobs(1)
+      @projects = Gitlab::Gem.jobs(1)
     end
 
     it 'gets the correct resource' do
@@ -17,7 +17,7 @@ describe Gitlab::Client do
   describe '.jobs - with scopes' do
     before do
       stub_get('/projects/1/jobs?scope[]=created&scope[]=running', 'jobs')
-      @projects = Gitlab.jobs(1, scope: %w[created running])
+      @projects = Gitlab::Gem.jobs(1, scope: %w[created running])
     end
 
     it 'gets the correct resource' do
@@ -28,7 +28,7 @@ describe Gitlab::Client do
   describe '.pipeline_jobs' do
     before do
       stub_get('/projects/1/pipelines/1/jobs', 'pipeline_jobs')
-      @projects = Gitlab.pipeline_jobs(1, 1)
+      @projects = Gitlab::Gem.pipeline_jobs(1, 1)
     end
 
     it 'gets the correct resource' do
@@ -39,7 +39,7 @@ describe Gitlab::Client do
   describe '.pipeline_jobs - with scope' do
     before do
       stub_get('/projects/1/pipelines/1/jobs?scope[]=running&scope[]=created', 'pipeline_jobs')
-      @projects = Gitlab.pipeline_jobs(1, 1, scope: %w[running created])
+      @projects = Gitlab::Gem.pipeline_jobs(1, 1, scope: %w[running created])
     end
 
     it 'gets the correct resource' do
@@ -50,7 +50,7 @@ describe Gitlab::Client do
   describe '.job' do
     before do
       stub_get('/projects/1/jobs/1', 'job')
-      @projects = Gitlab.job(1, 1)
+      @projects = Gitlab::Gem.job(1, 1)
     end
 
     it 'gets the correct resource' do
@@ -61,7 +61,7 @@ describe Gitlab::Client do
   describe '.job_artifacts' do
     before do
       stub_get('/projects/1/jobs/1/artifacts', 'job')
-      @projects = Gitlab.job_artifacts(1, 1)
+      @projects = Gitlab::Gem.job_artifacts(1, 1)
     end
 
     it 'gets the correct resource' do
@@ -72,7 +72,7 @@ describe Gitlab::Client do
   describe '.job_artifacts_download' do
     before do
       stub_get('/projects/1/jobs/artifacts/master/download?job=Release%20Build', 'job')
-      @projects = Gitlab.job_artifacts_download(1, 'master', 'Release Build')
+      @projects = Gitlab::Gem.job_artifacts_download(1, 'master', 'Release Build')
     end
 
     it 'gets the correct resource' do
@@ -83,7 +83,7 @@ describe Gitlab::Client do
   describe '.job_trace' do
     before do
       stub_get('/projects/1/jobs/1/trace', 'job_trace')
-      @projects = Gitlab.job_trace(1, 1)
+      @projects = Gitlab::Gem.job_trace(1, 1)
     end
 
     it 'gets the correct resource' do
@@ -94,7 +94,7 @@ describe Gitlab::Client do
   describe '.job_cancel' do
     before do
       stub_post('/projects/1/jobs/1/cancel', 'job')
-      @projects = Gitlab.job_cancel(1, 1)
+      @projects = Gitlab::Gem.job_cancel(1, 1)
     end
 
     it 'gets the correct resource' do
@@ -105,7 +105,7 @@ describe Gitlab::Client do
   describe '.job_retry' do
     before do
       stub_post('/projects/1/jobs/1/retry', 'job')
-      @projects = Gitlab.job_retry(1, 1)
+      @projects = Gitlab::Gem.job_retry(1, 1)
     end
 
     it 'gets the correct resource' do
@@ -116,7 +116,7 @@ describe Gitlab::Client do
   describe '.job_erase' do
     before do
       stub_post('/projects/1/jobs/1/erase', 'job')
-      @projects = Gitlab.job_erase(1, 1)
+      @projects = Gitlab::Gem.job_erase(1, 1)
     end
 
     it 'gets the correct resource' do
@@ -127,7 +127,7 @@ describe Gitlab::Client do
   describe '.job_play' do
     before do
       stub_post('/projects/1/jobs/1/play', 'job')
-      @projects = Gitlab.job_play(1, 1)
+      @projects = Gitlab::Gem.job_play(1, 1)
     end
 
     it 'gets the correct resource' do
@@ -138,7 +138,7 @@ describe Gitlab::Client do
   describe '.job_artifacts_keep' do
     before do
       stub_post('/projects/1/jobs/1/artifacts/keep', 'job')
-      @projects = Gitlab.job_artifacts_keep(1, 1)
+      @projects = Gitlab::Gem.job_artifacts_keep(1, 1)
     end
 
     it 'gets the correct resource' do
@@ -149,7 +149,7 @@ describe Gitlab::Client do
   describe '.job_artifacts_delete' do
     before do
       stub_delete('/projects/1/jobs/1/artifacts', 'job')
-      @projects = Gitlab.job_artifacts_delete(1, 1)
+      @projects = Gitlab::Gem.job_artifacts_delete(1, 1)
     end
 
     it 'gets the correct resource' do

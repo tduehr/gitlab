@@ -2,11 +2,11 @@
 
 require 'spec_helper'
 
-describe Gitlab::Client do
+describe Gitlab::Gem::Client do
   describe '.wikis' do
     before do
       stub_get('/projects/1/wikis', 'wikis')
-      @wikis = Gitlab.wikis(1)
+      @wikis = Gitlab::Gem.wikis(1)
     end
 
     it 'gets the correct resource' do
@@ -14,14 +14,14 @@ describe Gitlab::Client do
     end
 
     it "returns a response of a project's wikis" do
-      expect(@wikis).to be_a Gitlab::PaginatedResponse
+      expect(@wikis).to be_a Gitlab::Gem::PaginatedResponse
     end
   end
 
   describe '.wiki' do
     before do
       stub_get('/projects/1/wikis/home', 'wiki')
-      @wiki = Gitlab.wiki(1, 'home')
+      @wiki = Gitlab::Gem.wiki(1, 'home')
     end
 
     it 'gets the correct resource' do
@@ -36,7 +36,7 @@ describe Gitlab::Client do
   describe '.create_wiki' do
     before do
       stub_post('/projects/1/wikis', 'wiki')
-      @wiki = Gitlab.create_wiki(1, 'home', 'home page')
+      @wiki = Gitlab::Gem.create_wiki(1, 'home', 'home page')
     end
 
     it 'gets the correct resource' do
@@ -53,7 +53,7 @@ describe Gitlab::Client do
   describe '.update_wiki' do
     before do
       stub_put('/projects/1/wikis/home', 'wiki')
-      @wiki = Gitlab.update_wiki(1, 'home', format: 'markdown')
+      @wiki = Gitlab::Gem.update_wiki(1, 'home', format: 'markdown')
     end
 
     it 'gets the correct resource' do
@@ -69,7 +69,7 @@ describe Gitlab::Client do
   describe '.delete_wiki' do
     before do
       stub_delete('/projects/1/wikis/home', 'empty')
-      @wiki = Gitlab.delete_wiki(1, 'home')
+      @wiki = Gitlab::Gem.delete_wiki(1, 'home')
     end
 
     it 'gets the correct resource' do

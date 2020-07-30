@@ -2,7 +2,7 @@
 
 require 'spec_helper'
 
-describe Gitlab::Client do
+describe Gitlab::Gem::Client do
   it { is_expected.to respond_to :system_hooks }
   it { is_expected.to respond_to :add_system_hook }
   it { is_expected.to respond_to :system_hook }
@@ -11,7 +11,7 @@ describe Gitlab::Client do
   describe '.hooks' do
     before do
       stub_get('/hooks', 'system_hooks')
-      @hooks = Gitlab.hooks
+      @hooks = Gitlab::Gem.hooks
     end
 
     it 'gets the correct resource' do
@@ -19,7 +19,7 @@ describe Gitlab::Client do
     end
 
     it 'returns a paginated response of system hooks' do
-      expect(@hooks).to be_a Gitlab::PaginatedResponse
+      expect(@hooks).to be_a Gitlab::Gem::PaginatedResponse
       expect(@hooks.first.url).to eq('http://example.com/hook')
     end
   end
@@ -27,7 +27,7 @@ describe Gitlab::Client do
   describe '.add_hook' do
     before do
       stub_post('/hooks', 'system_hook')
-      @hook = Gitlab.add_hook('http://example.com/hook', token: 'secret-token')
+      @hook = Gitlab::Gem.add_hook('http://example.com/hook', token: 'secret-token')
     end
 
     it 'gets the correct resource' do
@@ -42,7 +42,7 @@ describe Gitlab::Client do
   describe '.hook' do
     before do
       stub_get('/hooks/3', 'system_hook')
-      @hook = Gitlab.hook(3)
+      @hook = Gitlab::Gem.hook(3)
     end
 
     it 'gets the correct resource' do
@@ -57,7 +57,7 @@ describe Gitlab::Client do
   describe '.delete_hook' do
     before do
       stub_delete('/hooks/3', 'system_hook')
-      @hook = Gitlab.delete_hook(3)
+      @hook = Gitlab::Gem.delete_hook(3)
     end
 
     it 'gets the correct resource' do

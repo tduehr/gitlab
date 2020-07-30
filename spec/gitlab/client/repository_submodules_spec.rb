@@ -2,7 +2,7 @@
 
 require 'spec_helper'
 
-describe Gitlab::Client do
+describe Gitlab::Gem::Client do
   describe '.edit_submodule' do
     let(:api_path) { '/projects/3/repository/submodules/submodule' }
     let(:options) do
@@ -15,7 +15,7 @@ describe Gitlab::Client do
 
     before do
       stub_put(api_path, 'repository_submodule')
-      @submodule = Gitlab.edit_submodule(3, 'submodule', options)
+      @submodule = Gitlab::Gem.edit_submodule(3, 'submodule', options)
     end
 
     it 'updates the correct resource' do

@@ -2,11 +2,11 @@
 
 require 'spec_helper'
 
-describe Gitlab::Client do
+describe Gitlab::Gem::Client do
   describe '.group_labels' do
     before do
       stub_get('/groups/3/labels', 'group_labels')
-      @labels = Gitlab.group_labels(3)
+      @labels = Gitlab::Gem.group_labels(3)
     end
 
     it 'gets the correct resource' do
@@ -14,7 +14,7 @@ describe Gitlab::Client do
     end
 
     it "returns a paginated response of group's labels" do
-      expect(@labels).to be_a Gitlab::PaginatedResponse
+      expect(@labels).to be_a Gitlab::Gem::PaginatedResponse
       expect(@labels.first.name).to eq('Backlog')
     end
   end
@@ -22,7 +22,7 @@ describe Gitlab::Client do
   describe '.create_group_label' do
     before do
       stub_post('/groups/3/labels', 'group_label')
-      @label = Gitlab.create_group_label(3, 'Backlog', '#DD10AA')
+      @label = Gitlab::Gem.create_group_label(3, 'Backlog', '#DD10AA')
     end
 
     it 'gets the correct resource' do
@@ -39,7 +39,7 @@ describe Gitlab::Client do
   describe '.edit_group_label' do
     before do
       stub_put('/groups/3/labels', 'group_label')
-      @label = Gitlab.edit_group_label(3, 'TODO', new_name: 'Backlog')
+      @label = Gitlab::Gem.edit_group_label(3, 'TODO', new_name: 'Backlog')
     end
 
     it 'gets the correct resource' do
@@ -55,7 +55,7 @@ describe Gitlab::Client do
   describe '.delete_group_label' do
     before do
       stub_delete('/groups/3/labels', 'label')
-      @label = Gitlab.delete_group_label(3, 'Backlog')
+      @label = Gitlab::Gem.delete_group_label(3, 'Backlog')
     end
 
     it 'gets the correct resource' do
@@ -71,7 +71,7 @@ describe Gitlab::Client do
   describe '.subscribe_to_group_label' do
     before do
       stub_post('/groups/3/labels/Backlog/subscribe', 'group_label')
-      @label = Gitlab.subscribe_to_group_label(3, 'Backlog')
+      @label = Gitlab::Gem.subscribe_to_group_label(3, 'Backlog')
     end
 
     it 'gets the correct resource' do
@@ -87,7 +87,7 @@ describe Gitlab::Client do
   describe '.unsubscribe_from_group_label' do
     before do
       stub_post('/groups/3/labels/Backlog/unsubscribe', 'group_label_unsubscribe')
-      @label = Gitlab.unsubscribe_from_group_label(3, 'Backlog')
+      @label = Gitlab::Gem.unsubscribe_from_group_label(3, 'Backlog')
     end
 
     it 'gets the correct resource' do

@@ -2,11 +2,11 @@
 
 require 'spec_helper'
 
-describe Gitlab::Client do
+describe Gitlab::Gem::Client do
   describe '.events' do
     before do
       stub_get('/events', 'user_events')
-      @events = Gitlab.events
+      @events = Gitlab::Gem.events
     end
 
     it 'gets the correct resource' do
@@ -14,14 +14,14 @@ describe Gitlab::Client do
     end
 
     it "returns a response of user's events" do
-      expect(@events).to be_a Gitlab::PaginatedResponse
+      expect(@events).to be_a Gitlab::Gem::PaginatedResponse
     end
   end
 
   describe '.user_events' do
     before do
       stub_get('/users/1/events', 'user_events')
-      @events = Gitlab.user_events(1)
+      @events = Gitlab::Gem.user_events(1)
     end
 
     it 'gets the correct resource' do
@@ -29,14 +29,14 @@ describe Gitlab::Client do
     end
 
     it "returns a response of user's contribution events" do
-      expect(@events).to be_a Gitlab::PaginatedResponse
+      expect(@events).to be_a Gitlab::Gem::PaginatedResponse
     end
   end
 
   describe '.project_events' do
     before do
       stub_get('/projects/1/events', 'project_events')
-      @events = Gitlab.project_events(1)
+      @events = Gitlab::Gem.project_events(1)
     end
 
     it 'gets the correct resource' do
@@ -44,7 +44,7 @@ describe Gitlab::Client do
     end
 
     it "returns a response of project's visible events" do
-      expect(@events).to be_a Gitlab::PaginatedResponse
+      expect(@events).to be_a Gitlab::Gem::PaginatedResponse
     end
   end
 end

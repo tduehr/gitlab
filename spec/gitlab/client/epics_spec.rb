@@ -2,11 +2,11 @@
 
 require 'spec_helper'
 
-describe Gitlab::Client do
+describe Gitlab::Gem::Client do
   describe '.epics' do
     before do
       stub_get('/groups/1/epics', 'epics')
-      @epics = Gitlab.epics(1)
+      @epics = Gitlab::Gem.epics(1)
     end
 
     it 'gets the correct resource' do
@@ -14,14 +14,14 @@ describe Gitlab::Client do
     end
 
     it 'returns a paginated response of groups' do
-      expect(@epics).to be_a Gitlab::PaginatedResponse
+      expect(@epics).to be_a Gitlab::Gem::PaginatedResponse
     end
   end
 
   describe '.epic' do
     before do
       stub_get('/groups/1/epics/2', 'epic')
-      Gitlab.epic(1, 2)
+      Gitlab::Gem.epic(1, 2)
     end
 
     it 'gets the correct resource' do
@@ -32,7 +32,7 @@ describe Gitlab::Client do
   describe '.create_epic' do
     before do
       stub_post('/groups/1/epics', 'epic')
-      Gitlab.create_epic(1, 'foo', description: 'bar')
+      Gitlab::Gem.create_epic(1, 'foo', description: 'bar')
     end
 
     it 'creates the right resource' do
@@ -44,7 +44,7 @@ describe Gitlab::Client do
   describe '.edit_epic' do
     before do
       stub_put('/groups/1/epics/2', 'epic')
-      Gitlab.edit_epic(1, 2, title: 'mepmep')
+      Gitlab::Gem.edit_epic(1, 2, title: 'mepmep')
     end
 
     it 'updates the correct resource' do
@@ -56,7 +56,7 @@ describe Gitlab::Client do
   describe '.delete_epic' do
     before do
       stub_delete('/groups/1/epics/2', 'epic')
-      Gitlab.delete_epic(1, 2)
+      Gitlab::Gem.delete_epic(1, 2)
     end
 
     it 'deletes the correct resource' do
