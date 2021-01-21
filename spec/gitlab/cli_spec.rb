@@ -37,7 +37,7 @@ describe Gitlab::CLI do
       end
 
       it 'shows executed command' do
-        expect(@output).to include('Gitlab.user')
+        expect(@output).to include('Gitlab::Client.user')
       end
 
       it 'shows user data' do
@@ -53,7 +53,7 @@ describe Gitlab::CLI do
       end
 
       it 'shows executed command' do
-        expect(@output).to include('Gitlab.users')
+        expect(@output).to include('Gitlab::Client.users')
       end
 
       it 'shows users data' do
@@ -71,7 +71,7 @@ describe Gitlab::CLI do
       end
 
       it 'shows executed command' do
-        expect(@output).to include('Gitlab.create_label Project, Backlog, #DD10AA')
+        expect(@output).to include('Gitlab::Client.create_label Project, Backlog, #DD10AA')
       end
     end
   end
@@ -100,7 +100,7 @@ describe Gitlab::CLI do
 
       it 'renders output as json' do
         expect(JSON.parse(@output)['result']).to eq(JSON.parse(File.read("#{File.dirname(__FILE__)}/../fixtures/user.json")))
-        expect(JSON.parse(@output)['cmd']).to eq('Gitlab.user')
+        expect(JSON.parse(@output)['cmd']).to eq('Gitlab::Client.user')
       end
     end
 
