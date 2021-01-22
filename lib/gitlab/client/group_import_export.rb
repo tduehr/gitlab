@@ -11,7 +11,7 @@ class Gitlab::Client
     #     Gitlab.group_export(1, description: "Tribute")
     #
     # @param [Integer] :id(required) Project id to be exported.
-    # @return [Gitlab::ObjectifiedHash] Status message for the export request.
+    # @return [Gitlab::Client::ObjectifiedHash] Status message for the export request.
     def group_export(id)
       post("/groups/#{id}/export")
     end
@@ -28,9 +28,9 @@ class Gitlab::Client
           headers: { Accept: 'application/octet-stream' },
           parser: proc { |body, _|
                     if body.encoding == Encoding::ASCII_8BIT # binary response
-                      ::Gitlab::FileResponse.new StringIO.new(body, 'rb+')
+                      ::Gitlab::Client::FileResponse.new StringIO.new(body, 'rb+')
                     else # error with json response
-                      ::Gitlab::Request.parse(body)
+                      ::Gitlab::Client.parse(body)
                     end
                   })
     end
