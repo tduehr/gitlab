@@ -8,7 +8,7 @@ describe Gitlab::CLI do
     context 'when command is version' do
       it 'shows gem version' do
         output = capture_output { described_class.run('-v') }
-        expect(output).to eq("Gitlab Ruby Gem #{Gitlab::VERSION}\n")
+        expect(output).to eq("Gitlab Ruby Gem #{Gitlab::Client::VERSION}\n")
       end
     end
 

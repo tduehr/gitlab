@@ -8,7 +8,7 @@ describe Gitlab::Client do
       stub_get('/version', 'version')
     end
 
-    let!(:version) { Gitlab.version }
+    let!(:version) { Gitlab::Client.version }
 
     it 'gets the correct resource' do
       expect(a_get('/version')).to have_been_made

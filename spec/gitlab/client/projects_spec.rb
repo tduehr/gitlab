@@ -8,7 +8,7 @@ describe Gitlab::Client do
   describe '.projects' do
     before do
       stub_get('/projects', 'projects')
-      @projects = Gitlab.projects
+      @projects = Gitlab::Client.projects
     end
 
     it 'gets the correct resource' do
@@ -16,7 +16,7 @@ describe Gitlab::Client do
     end
 
     it 'returns a paginated response of projects' do
-      expect(@projects).to be_a Gitlab::PaginatedResponse
+      expect(@projects).to be_a Gitlab::Client::PaginatedResponse
       expect(@projects.first.name).to eq('Brute')
       expect(@projects.first.owner.name).to eq('John Smith')
     end
@@ -25,7 +25,7 @@ describe Gitlab::Client do
   describe '.project_search' do
     before do
       stub_get('/projects?search=Gitlab', 'project_search')
-      @project_search = Gitlab.project_search('Gitlab')
+      @project_search = Gitlab::Client.project_search('Gitlab')
     end
 
     it 'gets the correct resource' do
@@ -33,7 +33,7 @@ describe Gitlab::Client do
     end
 
     it 'returns a paginated response of projects found' do
-      expect(@project_search).to be_a Gitlab::PaginatedResponse
+      expect(@project_search).to be_a Gitlab::Client::PaginatedResponse
       expect(@project_search.first.name).to eq('Gitlab')
       expect(@project_search.first.owner.name).to eq('John Smith')
     end
@@ -42,7 +42,7 @@ describe Gitlab::Client do
   describe '.project' do
     before do
       stub_get('/projects/3', 'project')
-      @project = Gitlab.project(3)
+      @project = Gitlab::Client.project(3)
     end
 
     it 'gets the correct resource' do
@@ -58,7 +58,7 @@ describe Gitlab::Client do
   describe '.create_project' do
     before do
       stub_post('/projects', 'project')
-      @project = Gitlab.create_project('Gitlab')
+      @project = Gitlab::Client.create_project('Gitlab')
     end
 
     it 'gets the correct resource' do
@@ -74,9 +74,9 @@ describe Gitlab::Client do
   describe '.create_project for user' do
     before do
       stub_post('/users', 'user')
-      @owner = Gitlab.create_user('john@example.com', 'pass', 'john', name: 'John Owner')
+      @owner = Gitlab::Client.create_user('john@example.com', 'pass', 'john', name: 'John Owner')
       stub_post("/projects/user/#{@owner.id}", 'project_for_user')
-      @project = Gitlab.create_project('Brute', user_id: @owner.id)
+      @project = Gitlab::Client.create_project('Brute', user_id: @owner.id)
     end
 
     it 'returns information about a created project' do
@@ -88,7 +88,7 @@ describe Gitlab::Client do
   describe '.delete_project' do
     before do
       stub_delete('/projects/Gitlab', 'project')
-      @project = Gitlab.delete_project('Gitlab')
+      @project = Gitlab::Client.delete_project('Gitlab')
     end
 
     it 'gets the correct resource' do
@@ -105,7 +105,7 @@ describe Gitlab::Client do
     context 'without sudo option' do
       before do
         stub_post('/projects/3/fork', 'project_fork')
-        @project = Gitlab.create_fork(3)
+        @project = Gitlab::Client.create_fork(3)
       end
 
       it 'posts to the correct resource' do
@@ -122,7 +122,7 @@ describe Gitlab::Client do
       before do
         stub_post('/projects/3/fork', 'project_forked_for_user')
         @sudoed_username = 'jack.smith'
-        @project = Gitlab.create_fork(3, sudo: @sudoed_username)
+        @project = Gitlab::Client.create_fork(3, sudo: @sudoed_username)
       end
 
       it 'posts to the correct resource' do
@@ -140,7 +140,7 @@ describe Gitlab::Client do
   describe '.project_forks' do
     before do
       stub_get('/projects/3/forks', 'project_forks')
-      @project_forks = Gitlab.project_forks(3)
+      @project_forks = Gitlab::Client.project_forks(3)
     end
 
     it 'gets the correct resource' do
@@ -148,7 +148,7 @@ describe Gitlab::Client do
     end
 
     it 'returns a paginated response of projects found' do
-      expect(@project_forks).to be_a Gitlab::PaginatedResponse
+      expect(@project_forks).to be_a Gitlab::Client::PaginatedResponse
       expect(@project_forks.first.name).to eq('gitlab')
       expect(@project_forks.first.owner.name).to eq('Administrator')
     end
@@ -157,7 +157,7 @@ describe Gitlab::Client do
   describe '.team_members' do
     before do
       stub_get('/projects/3/members', 'team_members')
-      @team_members = Gitlab.team_members(3)
+      @team_members = Gitlab::Client.team_members(3)
     end
 
     it 'gets the correct resource' do
@@ -165,7 +165,7 @@ describe Gitlab::Client do
     end
 
     it 'returns a paginated response of team members' do
-      expect(@team_members).to be_a Gitlab::PaginatedResponse
+      expect(@team_members).to be_a Gitlab::Client::PaginatedResponse
       expect(@team_members.first.name).to eq('John Smith')
     end
   end
@@ -173,7 +173,7 @@ describe Gitlab::Client do
   describe '.all_members' do
     before do
       stub_get('/projects/3/members/all', 'team_members')
-      @all_members = Gitlab.all_members(3)
+      @all_members = Gitlab::Client.all_members(3)
     end
 
     it 'gets the correct resource' do
@@ -181,7 +181,7 @@ describe Gitlab::Client do
     end
 
     it 'returns a paginated response of all team members including inherited' do
-      expect(@all_members).to be_a Gitlab::PaginatedResponse
+      expect(@all_members).to be_a Gitlab::Client::PaginatedResponse
       expect(@all_members.first.name).to eq('John Smith')
     end
   end
@@ -189,7 +189,7 @@ describe Gitlab::Client do
   describe '.team_member' do
     before do
       stub_get('/projects/3/members/1', 'team_member')
-      @team_member = Gitlab.team_member(3, 1)
+      @team_member = Gitlab::Client.team_member(3, 1)
     end
 
     it 'gets the correct resource' do
@@ -204,7 +204,7 @@ describe Gitlab::Client do
   describe '.add_team_member' do
     before do
       stub_post('/projects/3/members', 'team_member')
-      @team_member = Gitlab.add_team_member(3, 1, 40, expires_at: '2018-12-31')
+      @team_member = Gitlab::Client.add_team_member(3, 1, 40, expires_at: '2018-12-31')
     end
 
     it 'gets the correct resource' do
@@ -221,7 +221,7 @@ describe Gitlab::Client do
   describe '.edit_team_member' do
     before do
       stub_put('/projects/3/members/1', 'team_member')
-      @team_member = Gitlab.edit_team_member(3, 1, 40, expires_at: '2018-12-31')
+      @team_member = Gitlab::Client.edit_team_member(3, 1, 40, expires_at: '2018-12-31')
     end
 
     it 'gets the correct resource' do
@@ -238,7 +238,7 @@ describe Gitlab::Client do
   describe '.remove_team_member' do
     before do
       stub_delete('/projects/3/members/1', 'team_member')
-      @team_member = Gitlab.remove_team_member(3, 1)
+      @team_member = Gitlab::Client.remove_team_member(3, 1)
     end
 
     it 'gets the correct resource' do
@@ -253,7 +253,7 @@ describe Gitlab::Client do
   describe '.project_hooks' do
     before do
       stub_get('/projects/1/hooks', 'project_hooks')
-      @hooks = Gitlab.project_hooks(1)
+      @hooks = Gitlab::Client.project_hooks(1)
     end
 
     it 'gets the correct resource' do
@@ -261,7 +261,7 @@ describe Gitlab::Client do
     end
 
     it 'returns a paginated response of hooks' do
-      expect(@hooks).to be_a Gitlab::PaginatedResponse
+      expect(@hooks).to be_a Gitlab::Client::PaginatedResponse
       expect(@hooks.first.url).to eq('https://api.example.net/v1/webhooks/ci')
     end
   end
@@ -269,7 +269,7 @@ describe Gitlab::Client do
   describe '.project_hook' do
     before do
       stub_get('/projects/1/hooks/1', 'project_hook')
-      @hook = Gitlab.project_hook(1, 1)
+      @hook = Gitlab::Client.project_hook(1, 1)
     end
 
     it 'gets the correct resource' do
@@ -285,7 +285,7 @@ describe Gitlab::Client do
     context 'without specified events' do
       before do
         stub_post('/projects/1/hooks', 'project_hook')
-        @hook = Gitlab.add_project_hook(1, 'https://api.example.net/v1/webhooks/ci')
+        @hook = Gitlab::Client.add_project_hook(1, 'https://api.example.net/v1/webhooks/ci')
       end
 
       it 'gets the correct resource' do
@@ -301,7 +301,7 @@ describe Gitlab::Client do
     context 'with specified events' do
       before do
         stub_post('/projects/1/hooks', 'project_hook')
-        @hook = Gitlab.add_project_hook(1, 'https://api.example.net/v1/webhooks/ci', push_events: true, merge_requests_events: true)
+        @hook = Gitlab::Client.add_project_hook(1, 'https://api.example.net/v1/webhooks/ci', push_events: true, merge_requests_events: true)
       end
 
       it 'gets the correct resource' do
@@ -318,7 +318,7 @@ describe Gitlab::Client do
   describe '.edit_project_hook' do
     before do
       stub_put('/projects/1/hooks/1', 'project_hook')
-      @hook = Gitlab.edit_project_hook(1, 1, 'https://api.example.net/v1/webhooks/ci')
+      @hook = Gitlab::Client.edit_project_hook(1, 1, 'https://api.example.net/v1/webhooks/ci')
     end
 
     it 'gets the correct resource' do
@@ -335,7 +335,7 @@ describe Gitlab::Client do
     context 'using project ID' do
       before do
         stub_put('/projects/3', 'project_edit').with(body: { name: 'Gitlab-edit' })
-        @edited_project = Gitlab.edit_project(3, name: 'Gitlab-edit')
+        @edited_project = Gitlab::Client.edit_project(3, name: 'Gitlab-edit')
       end
 
       it 'gets the correct resource' do
@@ -350,7 +350,7 @@ describe Gitlab::Client do
     context 'using namespaced project path' do
       it 'encodes the path properly' do
         stub = stub_put('/projects/namespace%2Fpath', 'project_edit').with(body: { name: 'Gitlab-edit' })
-        Gitlab.edit_project('namespace/path', name: 'Gitlab-edit')
+        Gitlab::Client.edit_project('namespace/path', name: 'Gitlab-edit')
         expect(stub).to have_been_requested
       end
     end
@@ -359,10 +359,10 @@ describe Gitlab::Client do
   describe '.delete_project_hook' do
     context 'when empty response' do
       before do
-        stub_request(:delete, "#{Gitlab.endpoint}/projects/1/hooks/1")
-          .with(headers: { 'PRIVATE-TOKEN' => Gitlab.private_token })
+        stub_request(:delete, "#{Gitlab::Client.endpoint}/projects/1/hooks/1")
+          .with(headers: { 'PRIVATE-TOKEN' => Gitlab::Client.private_token })
           .to_return(body: '')
-        @hook = Gitlab.delete_project_hook(1, 1)
+        @hook = Gitlab::Client.delete_project_hook(1, 1)
       end
 
       it 'gets the correct resource' do
@@ -377,7 +377,7 @@ describe Gitlab::Client do
     context 'when JSON response' do
       before do
         stub_delete('/projects/1/hooks/1', 'project_hook')
-        @hook = Gitlab.delete_project_hook(1, 1)
+        @hook = Gitlab::Client.delete_project_hook(1, 1)
       end
 
       it 'gets the correct resource' do
@@ -393,7 +393,7 @@ describe Gitlab::Client do
   describe '.push_rule' do
     before do
       stub_get('/projects/1/push_rule', 'push_rule')
-      @push_rule = Gitlab.push_rule(1)
+      @push_rule = Gitlab::Client.push_rule(1)
     end
 
     it 'gets the correct resource' do
@@ -408,7 +408,7 @@ describe Gitlab::Client do
   describe '.add_push_rule' do
     before do
       stub_post('/projects/1/push_rule', 'push_rule')
-      @push_rule = Gitlab.add_push_rule(1, deny_delete_tag: false, commit_message_regex: '\\b[A-Z]{3}-[0-9]+\\b')
+      @push_rule = Gitlab::Client.add_push_rule(1, deny_delete_tag: false, commit_message_regex: '\\b[A-Z]{3}-[0-9]+\\b')
     end
 
     it 'gets the correct resource' do
@@ -423,7 +423,7 @@ describe Gitlab::Client do
   describe '.edit_push_rule' do
     before do
       stub_put('/projects/1/push_rule', 'push_rule')
-      @push_rule = Gitlab.edit_push_rule(1, deny_delete_tag: false, commit_message_regex: '\\b[A-Z]{3}-[0-9]+\\b')
+      @push_rule = Gitlab::Client.edit_push_rule(1, deny_delete_tag: false, commit_message_regex: '\\b[A-Z]{3}-[0-9]+\\b')
     end
 
     it 'gets the correct resource' do
@@ -438,10 +438,10 @@ describe Gitlab::Client do
   describe '.delete_push_rule' do
     context 'when empty response' do
       before do
-        stub_request(:delete, "#{Gitlab.endpoint}/projects/1/push_rule")
-          .with(headers: { 'PRIVATE-TOKEN' => Gitlab.private_token })
+        stub_request(:delete, "#{Gitlab::Client.endpoint}/projects/1/push_rule")
+          .with(headers: { 'PRIVATE-TOKEN' => Gitlab::Client.private_token })
           .to_return(body: '')
-        @push_rule = Gitlab.delete_push_rule(1)
+        @push_rule = Gitlab::Client.delete_push_rule(1)
       end
 
       it 'gets the correct resource' do
@@ -456,7 +456,7 @@ describe Gitlab::Client do
     context 'when JSON response' do
       before do
         stub_delete('/projects/1/push_rule', 'push_rule')
-        @push_rule = Gitlab.delete_push_rule(1)
+        @push_rule = Gitlab::Client.delete_push_rule(1)
       end
 
       it 'gets the correct resource' do
@@ -472,7 +472,7 @@ describe Gitlab::Client do
   describe '.make_forked_from' do
     before do
       stub_post('/projects/42/fork/24', 'project_fork_link')
-      @forked_project_link = Gitlab.make_forked_from(42, 24)
+      @forked_project_link = Gitlab::Client.make_forked_from(42, 24)
     end
 
     it 'gets the correct resource' do
@@ -488,7 +488,7 @@ describe Gitlab::Client do
   describe '.remove_forked' do
     before do
       stub_delete('/projects/42/fork', 'project_fork_link')
-      @forked_project_link = Gitlab.remove_forked(42)
+      @forked_project_link = Gitlab::Client.remove_forked(42)
     end
 
     it 'gets the correct resource' do
@@ -503,7 +503,7 @@ describe Gitlab::Client do
   describe '.deploy_keys' do
     before do
       stub_get('/projects/42/deploy_keys', 'project_keys')
-      @deploy_keys = Gitlab.deploy_keys(42)
+      @deploy_keys = Gitlab::Client.deploy_keys(42)
     end
 
     it 'gets the correct resource' do
@@ -511,7 +511,7 @@ describe Gitlab::Client do
     end
 
     it 'returns project deploy keys' do
-      expect(@deploy_keys).to be_a Gitlab::PaginatedResponse
+      expect(@deploy_keys).to be_a Gitlab::Client::PaginatedResponse
       expect(@deploy_keys.first.id).to eq 2
       expect(@deploy_keys.first.title).to eq 'Key Title'
       expect(@deploy_keys.first.key).to match(/ssh-rsa/)
@@ -521,7 +521,7 @@ describe Gitlab::Client do
   describe '.deploy_key' do
     before do
       stub_get('/projects/42/deploy_keys/2', 'project_key')
-      @deploy_key = Gitlab.deploy_key(42, 2)
+      @deploy_key = Gitlab::Client.deploy_key(42, 2)
     end
 
     it 'gets the correct resource' do
@@ -539,7 +539,7 @@ describe Gitlab::Client do
     context 'no options' do
       before do
         stub_post('/projects/42/deploy_keys', 'project_key')
-        @deploy_key = Gitlab.create_deploy_key(42, 'My Key', 'Key contents')
+        @deploy_key = Gitlab::Client.create_deploy_key(42, 'My Key', 'Key contents')
       end
 
       it 'gets the correct resource' do
@@ -555,7 +555,7 @@ describe Gitlab::Client do
     context 'some options' do
       before do
         stub_post('/projects/42/deploy_keys', 'project_key')
-        @deploy_key = Gitlab.create_deploy_key(42, 'My Key', 'Key contents', can_push: true)
+        @deploy_key = Gitlab::Client.create_deploy_key(42, 'My Key', 'Key contents', can_push: true)
       end
 
       it 'gets the correct resource' do
@@ -572,7 +572,7 @@ describe Gitlab::Client do
   describe '.delete_deploy_key' do
     before do
       stub_delete('/projects/42/deploy_keys/2', 'project_key')
-      @deploy_key = Gitlab.delete_deploy_key(42, 2)
+      @deploy_key = Gitlab::Client.delete_deploy_key(42, 2)
     end
 
     it 'gets the correct resource' do
@@ -587,7 +587,7 @@ describe Gitlab::Client do
   describe '.enable_deploy_key' do
     before do
       stub_post('/projects/42/deploy_keys/2/enable', 'project_key')
-      @deploy_key = Gitlab.enable_deploy_key(42, 2)
+      @deploy_key = Gitlab::Client.enable_deploy_key(42, 2)
     end
 
     it 'gets the correct resource' do
@@ -603,7 +603,7 @@ describe Gitlab::Client do
   describe '.disable_deploy_key' do
     before do
       stub_post('/projects/42/deploy_keys/2/disable', 'project_key')
-      @deploy_key = Gitlab.disable_deploy_key(42, 2)
+      @deploy_key = Gitlab::Client.disable_deploy_key(42, 2)
     end
 
     it 'gets the correct resource' do
@@ -621,7 +621,7 @@ describe Gitlab::Client do
       before do
         body = { title: 'New key name' }
         stub_put('/projects/42/deploy_keys/2', 'project_key_edit').with(body: body)
-        @project_deploy_key = Gitlab.edit_deploy_key(42, 2, 'New key name')
+        @project_deploy_key = Gitlab::Client.edit_deploy_key(42, 2, 'New key name')
       end
 
       it 'puts the correct resource' do
@@ -631,7 +631,7 @@ describe Gitlab::Client do
       end
 
       it 'returns the correct updated information' do
-        expect(@project_deploy_key).to be_a Gitlab::ObjectifiedHash
+        expect(@project_deploy_key).to be_a Gitlab::Client::ObjectifiedHash
         expect(@project_deploy_key.title).to eq 'New key name'
       end
     end
@@ -640,7 +640,7 @@ describe Gitlab::Client do
       before do
         body = { title: 'New key name', can_push: true }
         stub_put('/projects/42/deploy_keys/2', 'project_key_edit').with(body: body)
-        @project_deploy_key = Gitlab.edit_deploy_key(42, 2, 'New key name', can_push: true)
+        @project_deploy_key = Gitlab::Client.edit_deploy_key(42, 2, 'New key name', can_push: true)
       end
 
       it 'puts the correct resource' do
@@ -650,7 +650,7 @@ describe Gitlab::Client do
       end
 
       it 'returns the correct updated information' do
-        expect(@project_deploy_key).to be_a Gitlab::ObjectifiedHash
+        expect(@project_deploy_key).to be_a Gitlab::Client::ObjectifiedHash
         expect(@project_deploy_key.title).to eq 'New key name'
         expect(@project_deploy_key.can_push).to eq true
       end
@@ -660,7 +660,7 @@ describe Gitlab::Client do
   describe '.share_project_with_group' do
     before do
       stub_post('/projects/3/share', 'group')
-      @group = Gitlab.share_project_with_group(3, 10, 40)
+      @group = Gitlab::Client.share_project_with_group(3, 10, 40)
     end
 
     it 'gets the correct resource' do
@@ -676,7 +676,7 @@ describe Gitlab::Client do
   describe '.unshare_project_with_group' do
     before do
       stub_delete('/projects/3/share/10', 'group')
-      @group = Gitlab.unshare_project_with_group(3, 10)
+      @group = Gitlab::Client.unshare_project_with_group(3, 10)
     end
 
     it 'gets the correct resource' do
@@ -687,7 +687,7 @@ describe Gitlab::Client do
   describe '.transfer_project' do
     before do
       stub_put('/projects/3/transfer', 'transfer_project')
-      @transfered_project = Gitlab.transfer_project(3, 'yolo')
+      @transfered_project = Gitlab::Client.transfer_project(3, 'yolo')
     end
 
     it 'gets the correct resource' do
@@ -703,7 +703,7 @@ describe Gitlab::Client do
   describe '.star_project' do
     before do
       stub_post('/projects/3/star', 'project_star')
-      @starred_project = Gitlab.star_project(3)
+      @starred_project = Gitlab::Client.star_project(3)
     end
 
     it 'gets the correct resource' do
@@ -718,7 +718,7 @@ describe Gitlab::Client do
   describe '.unstar_project' do
     before do
       stub_delete('/projects/3/star', 'project_unstar')
-      @unstarred_project = Gitlab.unstar_project(3)
+      @unstarred_project = Gitlab::Client.unstar_project(3)
     end
 
     it 'gets the correct resource' do
@@ -736,7 +736,7 @@ describe Gitlab::Client do
 
     before do
       stub_get("/users/#{user_id}/projects", 'user_projects')
-      @user_projects = Gitlab.user_projects(user_id)
+      @user_projects = Gitlab::Client.user_projects(user_id)
     end
 
     it 'gets the correct resource' do
@@ -744,7 +744,7 @@ describe Gitlab::Client do
     end
 
     it 'returns a paginated response of projects' do
-      expect(@user_projects).to be_a Gitlab::PaginatedResponse
+      expect(@user_projects).to be_a Gitlab::Client::PaginatedResponse
       expect(@user_projects.first.id).to eq(project_id)
       expect(@user_projects.first.owner.id).to eq(user_id)
     end
@@ -756,7 +756,7 @@ describe Gitlab::Client do
 
     before do
       stub_post("/projects/#{id}/uploads", 'upload_file')
-      @file = Gitlab.upload_file(id, file_fullpath)
+      @file = Gitlab::Client.upload_file(id, file_fullpath)
     end
 
     it 'gets the correct resource' do
@@ -773,7 +773,7 @@ describe Gitlab::Client do
   describe '.project_templates' do
     before do
       stub_get('/projects/3/templates/licenses', 'project_templates')
-      @project_templates = Gitlab.project_templates(3, 'licenses')
+      @project_templates = Gitlab::Client.project_templates(3, 'licenses')
     end
 
     it 'gets the correct resource' do
@@ -781,7 +781,7 @@ describe Gitlab::Client do
     end
 
     it "returns a paginated response of project's templates" do
-      expect(@project_templates).to be_a Gitlab::PaginatedResponse
+      expect(@project_templates).to be_a Gitlab::Client::PaginatedResponse
     end
   end
 
@@ -789,7 +789,7 @@ describe Gitlab::Client do
     context 'when dockerfiles' do
       before do
         stub_get('/projects/3/templates/dockerfiles/dock', 'dockerfile_project_template')
-        @project_template = Gitlab.project_template(3, 'dockerfiles', 'dock')
+        @project_template = Gitlab::Client.project_template(3, 'dockerfiles', 'dock')
       end
 
       it 'gets the correct resource' do
@@ -800,7 +800,7 @@ describe Gitlab::Client do
     context 'when licenses' do
       before do
         stub_get('/projects/3/templates/licenses/mit', 'license_project_template')
-        @project_template = Gitlab.project_template(3, 'licenses', 'mit')
+        @project_template = Gitlab::Client.project_template(3, 'licenses', 'mit')
       end
 
       it 'gets the correct resource' do
@@ -812,7 +812,7 @@ describe Gitlab::Client do
   describe '.archive_project' do
     before do
       stub_post('/projects/3/archive', 'project_archive')
-      @archived_project = Gitlab.archive_project('3')
+      @archived_project = Gitlab::Client.archive_project('3')
     end
 
     it 'gets the correct resource' do
@@ -828,7 +828,7 @@ describe Gitlab::Client do
   describe '.unarchive_project' do
     before do
       stub_post('/projects/3/unarchive', 'project_unarchive')
-      @unarchived_project = Gitlab.unarchive_project('3')
+      @unarchived_project = Gitlab::Client.unarchive_project('3')
     end
 
     it 'gets the correct resource' do
@@ -844,7 +844,7 @@ describe Gitlab::Client do
   describe '.project_custom_attributes' do
     before do
       stub_get('/projects/2/custom_attributes', 'project_custom_attributes')
-      @custom_attributes = Gitlab.project_custom_attributes(2)
+      @custom_attributes = Gitlab::Client.project_custom_attributes(2)
     end
 
     it 'gets the correct resource' do
@@ -860,7 +860,7 @@ describe Gitlab::Client do
   describe '.project_custom_attribute' do
     before do
       stub_get('/projects/2/custom_attributes/some_new_key', 'project_custom_attribute')
-      @custom_attribute = Gitlab.project_custom_attribute('some_new_key', 2)
+      @custom_attribute = Gitlab::Client.project_custom_attribute('some_new_key', 2)
     end
 
     it 'gets the correct resource' do
@@ -877,7 +877,7 @@ describe Gitlab::Client do
     describe 'with project ID' do
       before do
         stub_put('/projects/2/custom_attributes/some_new_key', 'project_custom_attribute')
-        @custom_attribute = Gitlab.add_project_custom_attribute('some_new_key', 'some_new_value', 2)
+        @custom_attribute = Gitlab::Client.add_project_custom_attribute('some_new_key', 'some_new_value', 2)
       end
 
       it 'gets the correct resource' do
@@ -897,7 +897,7 @@ describe Gitlab::Client do
     describe 'with project ID' do
       before do
         stub_delete('/projects/2/custom_attributes/some_new_key', 'project_custom_attribute')
-        @custom_attribute = Gitlab.delete_project_custom_attribute('some_new_key', 2)
+        @custom_attribute = Gitlab::Client.delete_project_custom_attribute('some_new_key', 2)
       end
 
       it 'gets the correct resource' do

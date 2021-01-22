@@ -6,7 +6,7 @@ describe Gitlab::Client do
   describe '.markdown' do
     before do
       stub_post('/markdown', 'markdown')
-      Gitlab.markdown('Hello world! :tada:', gfm: true, project: 'group_example/project_example')
+      Gitlab::Client.markdown('Hello world! :tada:', gfm: true, project: 'group_example/project_example')
     end
 
     it 'gets the correct resource' do

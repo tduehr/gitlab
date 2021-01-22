@@ -8,7 +8,7 @@ describe Gitlab::Client do
   describe '.namespaces' do
     before do
       stub_get('/namespaces', 'namespaces')
-      @namespaces = Gitlab.namespaces
+      @namespaces = Gitlab::Client.namespaces
     end
 
     it 'gets the correct resource' do
@@ -16,7 +16,7 @@ describe Gitlab::Client do
     end
 
     it 'returns a paginated response of namespaces' do
-      expect(@namespaces).to be_a Gitlab::PaginatedResponse
+      expect(@namespaces).to be_a Gitlab::Client::PaginatedResponse
       expect(@namespaces.first.path).to eq('john')
       expect(@namespaces.first.kind).to eq('user')
     end

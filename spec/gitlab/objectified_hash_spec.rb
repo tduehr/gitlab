@@ -2,7 +2,7 @@
 
 require 'spec_helper'
 
-describe Gitlab::ObjectifiedHash do
+describe Gitlab::Client::ObjectifiedHash do
   before do
     @hash = { a: 1, b: 2, 'string' => 'string', symbol: :symbol, array: ['string', { a: 1, b: 2 }] }
     @oh = described_class.new @hash

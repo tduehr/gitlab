@@ -3,7 +3,7 @@
 require 'spec_helper'
 require 'tempfile'
 
-describe Gitlab::Shell::History do
+describe Gitlab::Client::Shell::History do
   context 'saving to a file' do
     before do
       @file = Tempfile.new('.gitlab_shell_history')

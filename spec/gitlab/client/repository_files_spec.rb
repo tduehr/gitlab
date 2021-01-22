@@ -6,7 +6,7 @@ describe Gitlab::Client do
   describe '.file_contents' do
     before do
       stub_get('/projects/3/repository/files/Gemfile/raw?ref=master', 'raw_file.txt')
-      @file_contents = Gitlab.file_contents(3, 'Gemfile')
+      @file_contents = Gitlab::Client.file_contents(3, 'Gemfile')
     end
 
     it 'gets the correct resource' do
@@ -21,7 +21,7 @@ describe Gitlab::Client do
   describe '.get_file_blame' do
     before do
       stub_get('/projects/3/repository/files/README%2Emd/blame?ref=master', 'get_file_blame')
-      @blames = Gitlab.get_file_blame(3, 'README.md', 'master')
+      @blames = Gitlab::Client.get_file_blame(3, 'README.md', 'master')
     end
 
     it 'gets the correct resource' do
@@ -36,7 +36,7 @@ describe Gitlab::Client do
   describe '.get_file' do
     before do
       stub_get('/projects/3/repository/files/README%2Emd?ref=master', 'get_repository_file')
-      @file = Gitlab.get_file(3, 'README.md', 'master')
+      @file = Gitlab::Client.get_file(3, 'README.md', 'master')
     end
 
     it 'gets the correct resource' do
@@ -53,7 +53,7 @@ describe Gitlab::Client do
   describe '.create_file' do
     let(:api_path) { '/projects/3/repository/files/path' }
     let!(:request_stub) { stub_post(api_path, 'repository_file') }
-    let!(:file) { Gitlab.create_file(3, 'path', 'branch', 'content', 'commit message', author_name: 'joe') }
+    let!(:file) { Gitlab::Client.create_file(3, 'path', 'branch', 'content', 'commit message', author_name: 'joe') }
 
     it 'creates the correct resource' do
       expected_parameters = {
@@ -73,7 +73,7 @@ describe Gitlab::Client do
   describe '.edit_file' do
     let(:api_path) { '/projects/3/repository/files/path' }
     let!(:request_stub) { stub_put(api_path, 'repository_file') }
-    let!(:file) { Gitlab.edit_file(3, 'path', 'branch', 'content', 'commit message', author_name: 'joe') }
+    let!(:file) { Gitlab::Client.edit_file(3, 'path', 'branch', 'content', 'commit message', author_name: 'joe') }
 
     it 'updates the correct resource' do
       expected_parameters = {
@@ -93,7 +93,7 @@ describe Gitlab::Client do
   describe '.remove_file' do
     let(:api_path) { '/projects/3/repository/files/path' }
     let!(:request_stub) { stub_delete(api_path, 'repository_file') }
-    let!(:file) { Gitlab.remove_file(3, 'path', 'branch', 'commit message', author_name: 'joe') }
+    let!(:file) { Gitlab::Client.remove_file(3, 'path', 'branch', 'commit message', author_name: 'joe') }
 
     it 'updates the correct resource' do
       expected_parameters = {

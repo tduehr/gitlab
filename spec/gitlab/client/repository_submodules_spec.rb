@@ -15,7 +15,7 @@ describe Gitlab::Client do
 
     before do
       stub_put(api_path, 'repository_submodule')
-      @submodule = Gitlab.edit_submodule(3, 'submodule', options)
+      @submodule = Gitlab::Client.edit_submodule(3, 'submodule', options)
     end
 
     it 'updates the correct resource' do

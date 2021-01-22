@@ -8,7 +8,7 @@ describe Gitlab::Client do
   describe '.group_badges' do
     before do
       stub_get('/groups/3/badges', 'group_badges')
-      @group_badges = Gitlab.group_badges(3)
+      @group_badges = Gitlab::Client.group_badges(3)
     end
 
     it 'gets the correct resource' do
@@ -16,14 +16,14 @@ describe Gitlab::Client do
     end
 
     it "returns a paginated response of group's badges" do
-      expect(@group_badges).to be_a Gitlab::PaginatedResponse
+      expect(@group_badges).to be_a Gitlab::Client::PaginatedResponse
     end
   end
 
   describe '.group_badge' do
     before do
       stub_get('/groups/3/badges/1', 'group_badge')
-      @group_badge = Gitlab.group_badge(3, 1)
+      @group_badge = Gitlab::Client.group_badge(3, 1)
     end
 
     it 'gets the correct resource' do
@@ -38,7 +38,7 @@ describe Gitlab::Client do
   describe '.add_group_badge' do
     before do
       stub_post('/groups/3/badges', 'group_badge')
-      @group_badge = Gitlab.add_group_badge(3, link_url: 'http://example.com/ci_status.svg?project=%{project_path}&ref=%{default_branch}', image_url: 'https://shields.io/my/badge')
+      @group_badge = Gitlab::Client.add_group_badge(3, link_url: 'http://example.com/ci_status.svg?project=%{project_path}&ref=%{default_branch}', image_url: 'https://shields.io/my/badge')
     end
 
     it 'gets the correct resource' do
@@ -55,7 +55,7 @@ describe Gitlab::Client do
   describe '.edit_group_badge' do
     before do
       stub_put('/groups/3/badges/1', 'group_badge')
-      @group_badge = Gitlab.edit_group_badge(3, 1, link_url: 'http://example.com/ci_status.svg?project=%{project_path}&ref=%{default_branch}', image_url: 'https://shields.io/my/badge')
+      @group_badge = Gitlab::Client.edit_group_badge(3, 1, link_url: 'http://example.com/ci_status.svg?project=%{project_path}&ref=%{default_branch}', image_url: 'https://shields.io/my/badge')
     end
 
     it 'gets the correct resource' do
@@ -72,7 +72,7 @@ describe Gitlab::Client do
   describe '.remove_group_badge' do
     before do
       stub_delete('/groups/3/badges/3', 'empty')
-      @group_badge = Gitlab.remove_group_badge(3, 3)
+      @group_badge = Gitlab::Client.remove_group_badge(3, 3)
     end
 
     it 'gets the correct resource' do
@@ -83,7 +83,7 @@ describe Gitlab::Client do
   describe '.preview_group_badge' do
     before do
       stub_get('/groups/3/badges/render?image_url=https://shields.io/my/badge&link_url=http://example.com/ci_status.svg?project=%25%7Bproject_path%7D%26ref=%25%7Bdefault_branch%7D', 'preview_group_badge')
-      @preview_group_badge = Gitlab.preview_group_badge(3, 'http://example.com/ci_status.svg?project=%{project_path}&ref=%{default_branch}', 'https://shields.io/my/badge')
+      @preview_group_badge = Gitlab::Client.preview_group_badge(3, 'http://example.com/ci_status.svg?project=%{project_path}&ref=%{default_branch}', 'https://shields.io/my/badge')
     end
 
     it 'gets the correct resource' do

@@ -9,7 +9,7 @@ describe Gitlab::Client do
   describe '.application_settings' do
     before do
       stub_get('/application/settings', 'application_settings')
-      @application_settings = Gitlab.application_settings
+      @application_settings = Gitlab::Client.application_settings
     end
 
     it 'gets the correct resource' do
@@ -17,7 +17,7 @@ describe Gitlab::Client do
     end
 
     it 'returns a paginated response of projects' do
-      expect(@application_settings).to be_a Gitlab::ObjectifiedHash
+      expect(@application_settings).to be_a Gitlab::Client::ObjectifiedHash
       expect(@application_settings.default_projects_limit).to eq(100_000)
     end
   end
@@ -25,7 +25,7 @@ describe Gitlab::Client do
   describe '.edit_application_settings' do
     before do
       stub_put('/application/settings', 'application_settings').with(body: { signup_enabled: true })
-      @edited_application_settings = Gitlab.edit_application_settings(signup_enabled: true)
+      @edited_application_settings = Gitlab::Client.edit_application_settings(signup_enabled: true)
     end
 
     it 'gets the correct resource' do
