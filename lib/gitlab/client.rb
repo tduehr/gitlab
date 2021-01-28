@@ -37,6 +37,7 @@ module Gitlab
     include Features
     include GroupBadges
     include GroupBoards
+    include GroupImportExport
     include GroupLabels
     include GroupMilestones
     include Groups
